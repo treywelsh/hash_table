@@ -1,0 +1,13 @@
+It's a simple and non thread-safe implementation of a hash table with LRU.
+There is no remove operation, old elements will be recycled by the LRU.
+
+My goal was to hide the internal complexity.
+
+In order to reuse this implementation in an other project,
+you will have to redefine content of structs ht_key and ht_value, and adapt
+corresponding *_init, *_reset, *_cpy macros/functions
+in hash_elt.h file.
+You dont have to modify hash.c or hash.h files.
+
+This implementation let user manage memory, allocating elements,
+adding them to the hash table, and freeing them.
