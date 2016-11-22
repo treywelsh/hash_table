@@ -18,7 +18,7 @@ ht_init(ht_t *ht, size_t ht_pow_size, size_t pool_max) {
     assert(ht_pow_size > 0);
 
     /* hash table size */
-    ht->heads_max = (1 << ht_pow_size);
+    ht->heads_max = 1 << ht_pow_size;
 
     /* Initialize hash table : array of linked lists */
     ht->heads = malloc(ht->heads_max * sizeof(*ht->heads));
@@ -43,7 +43,7 @@ ht_init(ht_t *ht, size_t ht_pow_size, size_t pool_max) {
 
     /* Fill LRU with pool elements */
     for (i = 0 ; i < pool_max ; i++) {
-        TAILQ_INSERT_HEAD(ht->lru_head, &(ht->pool)[i], next_lru);
+        TAILQ_INSERT_HEAD(ht->lru_head, &ht->pool[i], next_lru);
     }
 
     ht->pool_max = pool_max;

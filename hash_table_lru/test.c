@@ -21,11 +21,11 @@ main(int argc, char *argv[]) {
         "bbb",
         "ccc",
         "ddd",
-        "eeeEEE",
         "aaa",
         "fff",
         "ggg",
-        "hhh"
+        "hhh",
+        "eeeEEE",
     };
     size_t strings_count = 8;
 

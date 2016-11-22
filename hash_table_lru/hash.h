@@ -26,12 +26,6 @@ typedef struct ht_elt ht_elt_t;
     ht_value_reset(&(e)->value); \
 }while(0)
 
-static inline void
-ht_elt_reset(ht_elt_t * e) {
-    ht_key_reset(&(e->key));
-    ht_value_reset(&(e->value));
-}
-
 /* Hastable */
 struct ht {
     ht_elt_t * pool;
