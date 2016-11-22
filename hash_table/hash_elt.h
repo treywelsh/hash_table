@@ -9,58 +9,40 @@
  * this header has to be redefined.
  */
 
+/*
+ * Key
+ * Must be defined :
+ *  - ht_key_init
+ *  - ht_key_clean
+ *  - ht_key_reset
+ *  - ht_key_cmp
+ *  - ht_hash
+ */
+
 struct ht_key {
     char * word;
     size_t len;
 };
 typedef struct ht_key ht_key_t;
 
-/* Hastable entry */
-struct ht_elt {
-    SLIST_ENTRY(ht_elt) next; /* don't touch */
+static inline int
+ht_key_init(ht_key_t * k, const char * word, size_t len) {
 
-    /* key */
-    ht_key_t key; /* don't touch */
+    assert(k != NULL);
 
-    /* value */
-    unsigned int count;
-
-    /* remove padding warning */
-    unsigned int padding;
-};
-typedef struct ht_elt ht_elt_t;
-
-
-static inline ht_elt_t *
-ht_elt_create(const char * word, size_t len) {
-    ht_elt_t * e;
-
-    e = malloc(sizeof(*e));
-    if (e == NULL) {
-        return NULL;
+    k->word = strndup(word, len);
+    if (k->word == NULL) {
+        return 1;
     }
-    (e->key).word = strndup(word, len);
-    if ((e->key).word == NULL) {
-        free(e);
-        return NULL;
-    }
-    (e->key).len = len;
-    e->count = 1;
+    k->len = len;
 
-    return e;
+    return 0;
 }
-
-static inline void
-ht_elt_destroy(ht_elt_t * e) {
-
-    assert(e != NULL);
-
-    free((e->key).word);
-    free(e);
-}
+#define ht_key_clean(k) free((k)->word)
+#define ht_key_reset(k) memset((k)->word, '\0', (k)->len)
 
 static inline int
-ht_elt_cmp(const ht_key_t * e1, const ht_key_t * e2) {
+ht_key_cmp(const ht_key_t * e1, const ht_key_t * e2) {
     assert(e1 != NULL);
     assert(e1->word != NULL);
     assert(e1->len > 0);
@@ -75,6 +57,25 @@ ht_elt_cmp(const ht_key_t * e1, const ht_key_t * e2) {
     return strncmp(e1->word, e2->word, e1->len);
 }
 
+
+/*
+ * Value
+ * Must be defined :
+ *  - ht_value_init
+ *  - ht_value_clean
+ *  - ht_value_reset
+ *  - ht_if_key_equal
+ */
+
+struct ht_value {
+    unsigned int count;
+};
+typedef struct ht_value ht_value_t;
+
+#define ht_value_init(v) ((v)->count = 0)
+#define ht_value_clean (void)
+#define ht_value_reset ht_value_init
+
 /* This function is called when an element
  * is already present in hashtable.
  * In this case, it permits to the user to act on
@@ -83,8 +84,8 @@ ht_elt_cmp(const ht_key_t * e1, const ht_key_t * e2) {
  * occurences of a word in a text.
  */
 static inline int
-ht_elt_already_added(ht_elt_t * e) {
-    (e->count)++;
+ht_if_key_equal(ht_value_t * v) {
+    (v->count)++;
     return 0;
 }
 

@@ -16,7 +16,7 @@ main(int argc, char *argv[]) {
     ht_elt_t *e;
     ht_elt_t *result_lookup;
     ht_key_t k;
-    const char * filename = "/var/log/messages";
+    const char * filename = "/var/log/bootstrap.log";
 
     ret = ht_init(&ht, 14);
     if (ret != SUCCESS ) {
@@ -46,11 +46,11 @@ main(int argc, char *argv[]) {
             printf("\"%s\" already added in hash\n", line);
 
             /* Element is user defined.
-	     * Here, it contains the count of the word when added several times.
-	     */
-            result_lookup = ht_lookup(&ht, &e->key);
+             * Here, it contains the count of the word when added several times.
+             */
+            result_lookup = ht_lookup(&ht, ht_get_key(e));
             if (result_lookup != NULL) {
-                printf("found with count %u\n", result_lookup->count);
+                printf("found with count %u\n", ht_get_value(result_lookup)->count);
             }
 
             ht_elt_destroy(e);
@@ -77,7 +77,7 @@ main(int argc, char *argv[]) {
         printf("\"%s\" not found\n", k.word);
         exit(1);
     }
-    printf("\"%s\" found with count %u\n", (e->key).word, e->count);
+    printf("\"%s\" found with count %u\n", ht_get_key(e)->word, ht_get_value(e)->count);
 
     printf("Removing %s\n", k.word);
     ht_remove(&ht, &k);
