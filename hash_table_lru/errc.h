@@ -2,10 +2,10 @@
 #define ERRC_H_
 
 enum {
-    SUCCESS = 0,
-    ERROR = 1,
+	SUCCESS = 0,
+	ERROR = 1,
 
-    HT_MALLOC_ERROR= 100,
+	HT_MALLOC_ERROR = 100,
 };
 
 #endif /* ERRC_H_ */
