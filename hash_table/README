@@ -1,4 +1,0 @@
-It's a non thread-safe implementation of a linked list.
-File hash_elt.h has to be redefined by user for each new usage of this hash table implementation.
-You may want to use an other list type than SLIST (singly linked list) from queue.h,
-it use less memory but less efficient for removing elements.
