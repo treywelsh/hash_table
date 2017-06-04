@@ -14,7 +14,6 @@
  * Must be defined :
  *  - ht_key_init
  *  - ht_key_clean
- *  - ht_key_reset
  *  - ht_key_cmp
  *  - ht_hash
  */
@@ -39,7 +38,6 @@ ht_key_init(ht_key_t *k, const char *word, size_t len) {
 	return 0;
 }
 #define ht_key_clean(k) free((k)->word)
-#define ht_key_reset(k) memset((k)->word, '\0', (k)->len)
 
 static inline int
 ht_key_cmp(const ht_key_t *e1, const ht_key_t *e2) {
@@ -63,7 +61,6 @@ ht_key_cmp(const ht_key_t *e1, const ht_key_t *e2) {
  * Must be defined :
  *  - ht_value_init
  *  - ht_value_clean
- *  - ht_value_reset
  *  - ht_if_key_equal
  */
 
@@ -74,7 +71,6 @@ typedef struct ht_value ht_value_t;
 
 #define ht_value_init(v) ((v)->count = 0)
 #define ht_value_clean (void)
-#define ht_value_reset ht_value_init
 
 /* This function is called when an element
  * is already present in hashtable.

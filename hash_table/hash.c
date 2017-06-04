@@ -23,7 +23,7 @@ ht_init(ht_t *ht, size_t two_pow_size) {
 	}
 
 	for (i = 0; i < ht->heads_max; i++) {
-		SLIST_INIT(&(ht->heads)[i]);
+		TAILQ_INIT(&(ht->heads)[i]);
 	}
 
 	/* ht->entries_count = 0; */
@@ -37,11 +37,11 @@ ht_clean(ht_t *ht) {
 	ht_elt_t *first;
 	assert(ht != NULL);
 
-	/* For each head of */
+	/* For each list */
 	for (i = 0; i < ht->heads_max; i++) {
-		while (!SLIST_EMPTY(&ht->heads[i])) {
-			first = SLIST_FIRST(&ht->heads[i]);
-			SLIST_REMOVE_HEAD(&ht->heads[i], next);
+		while (!TAILQ_EMPTY(&ht->heads[i])) {
+			first = TAILQ_FIRST(&ht->heads[i]);
+			TAILQ_REMOVE(&ht->heads[i], first, next);
 			ht_elt_destroy(first);
 		}
 	}
@@ -52,15 +52,25 @@ ht_clean(ht_t *ht) {
 static inline ht_elt_t *
 _ht_lookup_hash(const ht_t *ht, const ht_key_t *key, size_t hash) {
 	ht_elt_t *p;
+	ht_elt_t stnl;
 
 	assert(ht != NULL);
 	assert(key != NULL);
 
-	SLIST_FOREACH(p, &(ht->heads)[hash & ht->heads_mask], next) {
-		if (!ht_key_cmp(ht_get_key(p), key)) {
-			/* if equal, return element */
-			return p;
-		}
+	ht_key(&stnl) = *key;
+	TAILQ_INSERT_TAIL(&(ht->heads)[hash & ht->heads_mask], &stnl, next);
+
+	/* XXX  A sentinel node can be used here */
+	//TAILQ_FOREACH(p, &(ht->heads)[hash & ht->heads_mask], next) {
+	for (p = TAILQ_FIRST(&(ht->heads[hash & ht->heads_mask]))
+	     ; ht_key_cmp(&ht_key(p), key)
+	     ; p = TAILQ_NEXT(p, next)) {
+	}
+	TAILQ_REMOVE(&(ht->heads)[hash & ht->heads_mask], &stnl, next);
+
+	if (&ht_key(p) != &ht_key(&stnl)) {
+		/* if not the sentinel, we've found it */
+		return p;
 	}
 	return NULL;
 }
@@ -85,7 +95,7 @@ ht_add(ht_t *ht, ht_elt_t *e) {
 	assert(ht != NULL);
 	assert(e != NULL);
 
-	k = ht_get_key(e);
+	k = &ht_key(e);
 
 	assert(k->word != NULL);
 	assert(k->len > 0);
@@ -96,26 +106,25 @@ ht_add(ht_t *ht, ht_elt_t *e) {
 		/* If already in hash, act on
 		 * previously inserted value element
 		 */
-		ht_if_key_equal(ht_get_value(ret));
+		ht_if_key_equal(&ht_value(ret));
 
 		return HT_ALREADY_ADDED;
 	}
 
 	/* insert new element */
-	SLIST_INSERT_HEAD(&(ht->heads)[hash & ht->heads_mask], e, next);
+	TAILQ_INSERT_HEAD(&(ht->heads)[hash & ht->heads_mask], e, next);
 
 	return SUCCESS;
 }
 
 int
 ht_remove(ht_t *ht, const ht_key_t *k) {
-	size_t hash;
 	ht_elt_t *ret;
+	size_t hash = ht_hash(k);
 
-	hash = ht_hash(k);
-	ret = _ht_lookup_hash(ht, k, ht_hash(k)); \
+	ret = _ht_lookup_hash(ht, k, hash);
 	if (ret != NULL) {
-		SLIST_REMOVE(&(ht->heads)[hash & ht->heads_mask], ret, ht_elt, next);
+		TAILQ_REMOVE(&(ht->heads)[hash & ht->heads_mask], ret, next);
 		ht_elt_destroy(ret);
 		return SUCCESS;
 	}

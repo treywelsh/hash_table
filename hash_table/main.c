@@ -48,10 +48,10 @@ main(int argc, char *argv[]) {
 			/* Element is user defined.
 			 * Here, it contains the count of the word when added several times.
 			 */
-			result_lookup = ht_lookup(&ht, ht_get_key(e));
+			result_lookup = ht_lookup(&ht, &ht_key(e));
 			if (result_lookup != NULL) {
-				printf("found with count %u\n", ht_get_value(
-					 result_lookup)->count);
+				printf("found with count %u\n", ht_value(
+					 result_lookup).count);
 			}
 
 			ht_elt_destroy(e);
@@ -78,8 +78,8 @@ main(int argc, char *argv[]) {
 		printf("\"%s\" not found\n", k.word);
 		exit(1);
 	}
-	printf("\"%s\" found with count %u\n", ht_get_key(e)->word, ht_get_value(
-		 e)->count);
+	printf("\"%s\" found with count %u\n", ht_key(e).word, ht_value(
+		 e).count);
 
 	printf("Removing %s\n", k.word);
 	ht_remove(&ht, &k);

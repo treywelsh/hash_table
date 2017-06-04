@@ -16,15 +16,15 @@ enum {
 
 /* Hastable entry */
 struct ht_elt {
-	SLIST_ENTRY(ht_elt) next;
+	TAILQ_ENTRY(ht_elt) next;
 
 	ht_key_t key;
 	ht_value_t value;
 };
 typedef struct ht_elt ht_elt_t;
 
-#define ht_get_key(e) ( & (e)->key)
-#define ht_get_value(e) ( & (e)->value)
+#define ht_key(e) ((e)->key)
+#define ht_value(e) ((e)->value)
 
 static inline ht_elt_t *
 ht_elt_create(const char *word, size_t len) {
@@ -34,8 +34,10 @@ ht_elt_create(const char *word, size_t len) {
 	if (e == NULL) {
 		return NULL;
 	}
-	ht_key_init(ht_get_key(e), word, len);
-	ht_value_init(ht_get_value(e));
+
+    /* XXX check ret*/
+	ht_key_init(&ht_key(e), word, len);
+	ht_value_init(&ht_value(e));
 
 	return e;
 }
@@ -45,15 +47,15 @@ ht_elt_destroy(ht_elt_t *e) {
 
 	assert(e != NULL);
 
-	ht_key_clean(ht_get_key(e));
-	ht_value_clean(ht_get_value(e));
+	ht_key_clean(&ht_key(e));
+	ht_value_clean(ht_value(e));
 
 	free(e);
 }
 
 /* Hastable */
 struct ht {
-	SLIST_HEAD(ht_head, ht_elt) *heads;
+	TAILQ_HEAD(, ht_elt) *heads;
 	size_t heads_max;
 	size_t heads_mask;
 };
