@@ -1,29 +1,23 @@
 CFLAGS ?= -Wall -Wextra
 LDFLAGS ?=
 CC ?= gcc
+DEBUG ?= 0
+STATIC ?= 0
 INCLUDE= -I ../../tools/include/
 
 BIN = hash_test
-#SRC = $(wildcard *.c)
-SRC = hash.c main.c
 OBJ = $(SRC:.c=.o)
+SRC = hash.c main.c
 
 #Mandatory flags
-CFLAGS += -fstrict-aliasing ${INCLUDE}
+CFLAGS += ${INCLUDE}
 
-ifeq ($(CC), clang)
-	CFLAGS = -Weverything
-	DEBUG = 1
-endif
-
-DEBUG ?= 0
 ifeq ($(DEBUG), 1)
-	CFLAGS += -DDEBUG -O0 -g -fno-inline
+	CFLAGS += -DDEBUG -O0 -ggdb3
 else
-	CFLAGS += -O2 -DNDEBUG
+	CFLAGS += -DNDEBUG -O3
 endif
 
-STATIC ?= 0
 ifeq ($(STATIC), 1)
 	LDFLAGS += -static
 endif
