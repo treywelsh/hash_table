@@ -1,0 +1,19 @@
+#ifndef ERR_H_
+#define ERR_H_
+
+enum {
+	WC_SUCCESS = 0,
+	SHT_SUCCESS = 0,
+
+	WC_ERR_ARGS = 1,
+	WC_ERR_FOPEN,
+	WC_ERR_GETLINE,
+
+	SHTBKT_ERR_OOM = 10,
+
+	SHT_ERR_OOM_CREATE = 20,
+	SHT_ERR_KEY_TOO_LONG,
+	SHT_ERR_OOM_EXPAND_BUCKETS,
+};
+
+#endif /* ERR_H_ */

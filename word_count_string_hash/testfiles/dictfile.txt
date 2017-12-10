@@ -1,0 +1,4 @@
+# it's a comment, below are the word to be counted: 
+ipsum
+
+test
